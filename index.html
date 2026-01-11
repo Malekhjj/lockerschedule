@@ -25,18 +25,15 @@ body{
  color:white;
  text-align:center;
 }
-.date{font-size:20px;font-weight:700;}
-.week{font-size:13px;opacity:.85;}
-.clock{font-size:34px;font-weight:800;margin-top:4px;}
-.container{
-  padding:12px;
+.container {
+  padding:16px;             /* adds breathing room around all blocks */
   height:calc(100vh - 150px - var(--safe-bottom));
   display:flex;
   flex-direction:column;
-  gap:12px;
+  gap:12px;                  /* space between blocks */
 }
 
-.class{
+.class {
   background:white;
   border-radius:16px;
   padding:14px;
@@ -45,10 +42,8 @@ body{
   display:flex;
   flex-direction:column;
   justify-content:center;
-
-  /* KEY FIX */
-  min-height:60px;      /* ensures each block has breathing room */
-  flex-grow:1;          /* allows it to expand if space is available */
+  flex-grow:1;               /* expands to fill available space */
+  min-height:60px;           /* ensures a minimum readable size */
 }
 .current{background:#eafff1;border-left-color:#34c759;}
 .next{border-left-color:#0a84ff;}
