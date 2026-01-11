@@ -26,24 +26,22 @@ body{
  text-align:center;
 }
 .container {
-  padding:16px;             /* adds breathing room around all blocks */
-  height:calc(100vh - 150px - var(--safe-bottom));
-  display:flex;
-  flex-direction:column;
-  gap:12px;                  /* space between blocks */
+  padding:12px;
+  height:calc(100vh - 150px - env(safe-area-inset-bottom));
+  display:grid;
+  grid-template-rows: repeat(6, 1fr); /* 5 periods + lunch */
+  gap:12px;                           /* space between boxes */
 }
 
 .class {
   background:white;
-  border-radius:16px;
+  border-radius:18px;
   padding:14px;
-  box-shadow:0 4px 14px rgba(0,0,0,.12);
+  box-shadow:0 6px 18px rgba(0,0,0,.1);
   border-left:6px solid transparent;
   display:flex;
   flex-direction:column;
   justify-content:center;
-  flex-grow:1;               /* expands to fill available space */
-  min-height:60px;           /* ensures a minimum readable size */
 }
 .current{background:#eafff1;border-left-color:#34c759;}
 .next{border-left-color:#0a84ff;}
