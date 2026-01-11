@@ -2,89 +2,55 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Locker Schedule</title>
 
 <style>
-:root{
- --safe-top: env(safe-area-inset-top);
- --safe-bottom: env(safe-area-inset-bottom);
-}
 body{
  margin:0;
- font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",Helvetica,Arial,sans-serif;
+ font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",Arial,sans-serif;
  background:#f2f2f7;
  height:100vh;
  overflow:hidden;
+ display:flex;
+ flex-direction:column;
 }
-.header {
-  padding: calc(20px + env(safe-area-inset-top)) 16px 12px;
-  background: linear-gradient(180deg,#0a3a78,#0f62c8);
-  color: white;
-  text-align: center;
+.header{
+ padding:20px;
+ background:#0f62c8;
+ color:white;
+ text-align:center;
+ flex-shrink:0;
 }
+.date{font-size:22px;font-weight:bold;}
+.week{font-size:14px;opacity:0.8;}
+.clock{font-size:36px;font-weight:bold;margin-top:6px;}
 
-.date {
-  font-size: 24px;       /* slightly bigger */
-  font-weight: 700;      /* bold */
+.container{
+ padding:12px;
+ flex-grow:1;
+ overflow-y:auto;
+ display:flex;
+ flex-direction:column;
+ justify-content:flex-start;
 }
-
-.clock {
-  font-size: 38px;       /* slightly bigger */
-  font-weight: 800;
+.class{
+ background:white;
+ border-radius:16px;
+ padding:20px;
+ margin-bottom:16px;
+ border-left:6px solid transparent;
+ flex-shrink:0;
+ min-height:100px; /* bigger boxes */
+ display:flex;
+ flex-direction:column;
+ justify-content:center;
 }
-
-.week {
-  font-size: 16px;
-  opacity: 0.85;
-}
-
-.container {
-  padding: 12px;
-  height: calc(100vh - 150px - env(safe-area-inset-bottom));
-  display: flex;
-  flex-direction: column;
-  gap: 12px; /* spacing between blocks */
-}
-
-.class {
-  background: white;
-  border-radius: 18px;
-  padding: 14px;
-  box-shadow: 0 6px 18px rgba(0,0,0,.1);
-  border-left: 6px solid transparent; /* default left tab */
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  min-height: 60px; /* ensures readable size */
-}
-
-.current {
-  border-left-color: #34c759; /* green tab for current */
-  background: #eafff1;
-}
-
-.next {
-  border-left-color: #0a84ff; /* blue tab for next */
-}
-
-.lunch {
-  border-left-color: #ffcc00; /* orange tab for lunch */
-  background: #fff3cd;
-}
-
-.class:last-child {
-  margin-bottom:0; /* remove extra space after last block */
-}
-.current{background:#eafff1;border-left-color:#34c759;}
+.current{border-left-color:#34c759;background:#eafff1;}
 .next{border-left-color:#0a84ff;}
-.lunch{background:#fff3cd;border-left-color:#ffcc00;}
-
-.time{color:#666;font-size:12px;}
-.title{font-size:17px;font-weight:700;}
-.room{color:#777;font-size:13px;}
+.time{color:#666;font-size:16px;margin-bottom:6px;}
+.title{font-size:22px;font-weight:bold;margin-bottom:4px;}
+.room{color:#777;font-size:16px;}
 </style>
 </head>
 
@@ -99,51 +65,24 @@ body{
 <div class="container" id="schedule"></div>
 
 <script>
-// 12-hour clock (old iOS safe)
+// Clock function - 12-hour format with AM/PM
 function updateClock(){
- var n=new Date();
- var h=n.getHours();
- var m=n.getMinutes();
- var a=h>=12?"PM":"AM";
- h=h%12; if(h==0) h=12;
- if(m<10) m="0"+m;
- document.getElementById("clock").innerText=h+":"+m+" "+a;
+  var now = new Date();
+  var hours = now.getHours();
+  var minutes = now.getMinutes();
+  var ampm = hours >= 12 ? 'PM' : 'AM';
+  hours = hours % 12;
+  if(hours === 0) hours = 12; // handle midnight/noon
+  if(minutes < 10) minutes = '0' + minutes;
+  document.getElementById("clock").innerText = hours + ":" + minutes + " " + ampm;
 }
 setInterval(updateClock,1000);
 updateClock();
 
-// Today (skip weekends)
-var today=new Date();
-if(today.getDay()==6) today.setDate(today.getDate()+2);
-if(today.getDay()==0) today.setDate(today.getDate()+1);
+// Schedule data
+var week1Start = new Date(2026,0,5);
 
-// Manual date formatting
-var days=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-var months=["January","February","March","April","May","June","July","August","September","October","November","December"];
-document.getElementById("date").innerText=
- days[today.getDay()]+", "+months[today.getMonth()]+" "+today.getDate()+", "+today.getFullYear();
-
-// Week calc
-var week1Start=new Date(2026,0,5);
-var diff=Math.floor((today-week1Start)/86400000);
-var weekNum=(Math.floor(diff/7)%2==0)?1:2;
-document.getElementById("week").innerText="Week "+weekNum;
-
-// Time parser (iOS safe)
-function parseTime(t){
- var p=t.split(" ");
- var hm=p[0].split(":");
- var h=parseInt(hm[0]);
- var m=parseInt(hm[1]);
- if(p[1]=="PM" && h!=12) h+=12;
- if(p[1]=="AM" && h==12) h=0;
- var d=new Date(today);
- d.setHours(h,m,0,0);
- return d;
-}
-
-// Schedules
-var week1={
+var week1 = {
 1:[["8:20 AM","9:20 AM","Core French 8","Room #4"],["9:20 AM","10:20 AM","Scheduling Need","Room #6"],["10:20 AM","11:20 AM","English Language Arts 8","Room #8"],["12:50 PM","1:50 PM","Mathematics 8","Room #6"],["1:50 PM","2:50 PM","Social Studies 8","Room #8"]],
 2:[["8:20 AM","9:20 AM","Physical Education 8","Gym"],["9:20 AM","10:20 AM","English Language Arts 8","Room #8"],["10:20 AM","11:20 AM","Science 8","Room #6"],["12:50 PM","1:50 PM","Mathematics 8","Room #6"],["1:50 PM","2:50 PM","Band Instruments 8","Library"]],
 3:[["8:20 AM","9:20 AM","English Language Arts 8","Room #8"],["9:20 AM","10:20 AM","Food & Nutrition 8","Room 15B"],["10:20 AM","11:20 AM","Core French 8","Room #4"],["12:50 PM","1:50 PM","Health Education 8","Room #8"],["1:50 PM","2:50 PM","Mathematics 8","Room #6"]],
@@ -151,7 +90,7 @@ var week1={
 5:[["8:20 AM","9:20 AM","Social Studies 8","Room #8"],["9:20 AM","10:20 AM","Mathematics 8","Room #6"],["10:20 AM","11:20 AM","Physical Education 8","Gym"],["12:50 PM","1:50 PM","Science 8","Room #6"],["1:50 PM","2:50 PM","English Language Arts 8","Room #8"]]
 };
 
-var week2={
+var week2 = {
 1:[["8:20 AM","9:20 AM","Mathematics 8","Room #6"],["9:20 AM","10:20 AM","Scheduling Need","Room #6"],["10:20 AM","11:20 AM","English Language Arts 8","Room #8"],["12:50 PM","1:50 PM","Physical Education 8","Gym"],["1:50 PM","2:50 PM","Band Instruments 8","Library"]],
 2:[["8:20 AM","9:20 AM","Health Education 8","Room #8"],["9:20 AM","10:20 AM","Mathematics 8","Room #6"],["10:20 AM","11:20 AM","English Language Arts 8","Room #8"],["12:50 PM","1:50 PM","Science 8","Room #6"],["1:50 PM","2:50 PM","Technology Education 8","Room 15A"]],
 3:[["8:20 AM","9:20 AM","Social Studies 8","Room #8"],["9:20 AM","10:20 AM","Core French 8","Room #4"],["10:20 AM","11:20 AM","Physical Education 8","Gym"],["12:50 PM","1:50 PM","Mathematics 8","Room #6"],["1:50 PM","2:50 PM","English Language Arts 8","Room #8"]],
@@ -159,38 +98,47 @@ var week2={
 5:[["8:20 AM","9:20 AM","Mathematics 8","Room #6"],["9:20 AM","10:20 AM","Health Education 8","Room #8"],["10:20 AM","11:20 AM","Physical Education 8","Gym"],["12:50 PM","1:50 PM","English Language Arts 8","Room #8"],["1:50 PM","2:50 PM","Social Studies 8","Room #8"]]
 };
 
-// Get today safely
-var day=today.getDay();
-if(day==0 || day==6) day=1;
+// Get today
+var today = new Date();
+if(today.getDay()==6) today.setDate(today.getDate()+2);
+if(today.getDay()==0) today.setDate(today.getDate()+1);
 
-var raw=(weekNum==1?week1:week2)[day];
+// Manual weekday names
+var weekdays = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 
-// Add Lunch
-var schedule=[];
-raw.forEach(function(c){
- schedule.push(c);
- if(c[1]=="11:20 AM") schedule.push(["11:20 AM","12:50 PM","Lunch",""]);
-});
+var formattedDate = weekdays[today.getDay()] + ", " +
+                    months[today.getMonth()] + " " +
+                    today.getDate() + ", " +
+                    today.getFullYear();
 
-// Render
-var now=new Date();
-var next=false;
+document.getElementById("date").innerText = formattedDate;
 
-schedule.forEach(function(c){
- var s=parseTime(c[0]);
- var e=parseTime(c[1]);
- var cls="class";
- if(c[2]=="Lunch") cls+=" lunch";
- if(now>=s && now<=e) cls+=" current";
- else if(now<s && !next){cls+=" next"; next=true;}
+// Determine week number
+var diff = Math.floor((today-week1Start)/86400000);
+var weekNum = Math.floor(diff/7)%2==0 ? 1 : 2;
+document.getElementById("week").innerText = "Week " + weekNum;
 
- document.getElementById("schedule").innerHTML+=
- '<div class="'+cls+'">'+
- '<div class="time">'+c[0]+' – '+c[1]+'</div>'+
- '<div class="title">'+c[2]+'</div>'+
- '<div class="room">'+c[3]+'</div>'+
- '</div>';
-});
+// Display schedule
+var schedule = (weekNum==1?week1:week2)[today.getDay()];
+var nowTime = new Date();
+var next = false;
+
+for(var i=0;i<schedule.length;i++){
+ var c = schedule[i];
+ var s = new Date(today.toDateString()+" "+c[0]);
+ var e = new Date(today.toDateString()+" "+c[1]);
+ var cls = "class";
+ if(nowTime>=s && nowTime<=e) cls += " current";
+ else if(nowTime<s && !next){cls += " next"; next=true;}
+ 
+ document.getElementById("schedule").innerHTML +=
+  '<div class="'+cls+'">'+
+  '<div class="time">'+c[0]+' – '+c[1]+'</div>'+
+  '<div class="title">'+c[2]+'</div>'+
+  '<div class="room">'+c[3]+'</div>'+
+  '</div>';
+}
 </script>
 
 </body>
