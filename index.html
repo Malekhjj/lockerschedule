@@ -19,18 +19,20 @@ body{
  height:100vh;
  overflow:hidden;
 }
-.header{
- padding:calc(18px + var(--safe-top)) 12px 8px;
- background:linear-gradient(180deg,#0a3a78,#0f62c8);
- color:white;
- text-align:center;
+.header {
+  padding: calc(20px + env(safe-area-inset-top)) 16px 12px;
+  background: linear-gradient(180deg,#0a3a78,#0f62c8);
+  color:white;
+  text-align:center;
+  flex-shrink:0;  /* prevent shrinking */
 }
+
 .container {
   padding:12px;
-  height:calc(100vh - 150px - env(safe-area-inset-bottom));
-  display:grid;
-  grid-template-rows: repeat(6, 1fr); /* 5 periods + lunch */
-  gap:12px;                           /* space between boxes */
+  height: calc(100vh - 140px - env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* space blocks evenly */
 }
 
 .class {
@@ -42,6 +44,12 @@ body{
   display:flex;
   flex-direction:column;
   justify-content:center;
+  min-height:60px;   /* ensures readable text */
+  margin-bottom:12px; /* space between blocks */
+}
+
+.class:last-child {
+  margin-bottom:0; /* remove extra space after last block */
 }
 .current{background:#eafff1;border-left-color:#34c759;}
 .next{border-left-color:#0a84ff;}
