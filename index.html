@@ -22,9 +22,25 @@ body{
 .header {
   padding: calc(20px + env(safe-area-inset-top)) 16px 12px;
   background: linear-gradient(180deg,#0a3a78,#0f62c8);
-  color:white;
-  text-align:center;
-  flex-shrink:0;  /* prevent shrinking */
+  color: white;
+  text-align: center;
+
+  font-weight: 900;      /* make header text bold */
+}
+
+.date {
+  font-size: 24px;       /* slightly bigger than before */
+  font-weight: 700;      /* keeps it bold */
+}
+
+.clock {
+  font-size: 38px;       /* slightly bigger clock */
+  font-weight: 800;
+}
+
+.week {
+  font-size: 16px;       /* slightly bigger week text */
+  opacity: 0.85;
 }
 
 .container {
