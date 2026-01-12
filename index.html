@@ -3,32 +3,33 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Locker Schedule</title>
 
 <style>
 body{
  margin:0;
- font-family:-apple-system,BlinkMacSystemFont,Arial;
  background:#f2f2f7;
+ font-family:-apple-system,BlinkMacSystemFont,Arial;
  height:100vh;
- display:flex;
- flex-direction:column;
+ overflow:hidden;
 }
 
-.header{
- padding:14px;
+#header{
  background:#0f62c8;
  color:white;
  text-align:center;
+ padding:12px;
 }
 
-.date{font-size:26px;font-weight:bold;}
-.week{font-size:14px;opacity:.8;}
-.clock{font-size:48px;font-weight:bold;margin-top:6px;}
+#date{font-size:20px;font-weight:bold;}
+#clock{font-size:32px;font-weight:bold;margin-top:4px;}
+#week{font-size:14px;opacity:.8;}
 
-.container{
- flex:1;
+#schedule{
+ height:calc(100vh - 110px);
  padding:8px;
+ box-sizing:border-box;
  display:flex;
  flex-direction:column;
 }
@@ -39,88 +40,170 @@ body{
  padding:10px;
  margin-bottom:8px;
  border-left:6px solid transparent;
+ flex:1;
  display:flex;
  flex-direction:column;
  justify-content:center;
- flex:1;
 }
 
 .current{border-left-color:#34c759;background:#eafff1;}
 .next{border-left-color:#0a84ff;}
 
-.time{color:#666;font-size:16px;}
-.title{font-size:22px;font-weight:bold;}
-.room{color:#777;font-size:16px;}
-.room:empty{display:none;}
+.time{font-size:14px;color:#666;}
+.title{font-size:20px;font-weight:bold;}
+.room{font-size:14px;color:#777;}
 </style>
 </head>
 
 <body>
 
-<div class="header">
- <div class="date" id="date"></div>
- <div class="clock" id="clock"></div>
- <div class="week" id="week"></div>
+<div id="header">
+  <div id="date"></div>
+  <div id="clock"></div>
+  <div id="week"></div>
 </div>
 
-<div class="container" id="schedule"></div>
+<div id="schedule"></div>
 
 <script>
+// 12-hour clock
 function updateClock(){
  var n=new Date();
- var h=n.getHours(),m=n.getMinutes();
- var a=h>=12?"PM":"AM";
+ var h=n.getHours();
+ var m=n.getMinutes();
+ var am=h>=12?"PM":"AM";
  h=h%12; if(h==0)h=12;
  if(m<10)m="0"+m;
- document.getElementById("clock").innerHTML=h+":"+m+" "+a;
+ document.getElementById("clock").innerHTML=h+":"+m+" "+am;
 }
 setInterval(updateClock,1000);
 updateClock();
 
+// Week 1 starts Jan 5 2026
 var week1Start=new Date(2026,0,5);
-var L=["11:20 AM","12:50 PM","Lunch",""];
 
+// WEEK 1
 var week1={
-1:[["8:20 AM","9:20 AM","Core French 8","Room #4"],["9:20 AM","10:20 AM","Scheduling Need","Room #6"],["10:20 AM","11:20 AM","English Language Arts 8","Room #8"],L,["12:50 PM","1:50 PM","Mathematics 8","Room #6"],["1:50 PM","2:50 PM","Social Studies 8","Room #8"]],
-2:[["8:20 AM","9:20 AM","Physical Education 8","Gym"],["9:20 AM","10:20 AM","English Language Arts 8","Room #8"],["10:20 AM","11:20 AM","Science 8","Room #6"],L,["12:50 PM","1:50 PM","Mathematics 8","Room #6"],["1:50 PM","2:50 PM","Band Instruments 8","Library"]],
-3:[["8:20 AM","9:20 AM","English Language Arts 8","Room #8"],["9:20 AM","10:20 AM","Food & Nutrition 8","Room 15B"],["10:20 AM","11:20 AM","Core French 8","Room #4"],L,["12:50 PM","1:50 PM","Health Education 8","Room #8"],["1:50 PM","2:50 PM","Mathematics 8","Room #6"]],
-4:[["8:20 AM","9:20 AM","Mathematics 8","Room #6"],["9:20 AM","10:20 AM","Core French 8","Room #4"],["10:20 AM","11:20 AM","English Language Arts 8","Room #8"],L,["12:50 PM","1:50 PM","Science 8","Room #6"],["1:50 PM","2:50 PM","Band Instruments 8","Library"]],
-5:[["8:20 AM","9:20 AM","Social Studies 8","Room #8"],["9:20 AM","10:20 AM","Mathematics 8","Room #6"],["10:20 AM","11:20 AM","Physical Education 8","Gym"],L,["12:50 PM","1:50 PM","Science 8","Room #6"],["1:50 PM","2:50 PM","English Language Arts 8","Room #8"]]
+1:[
+["8:20 AM","9:20 AM","Core French 8","Room 4"],
+["9:20 AM","10:20 AM","Scheduling Need","Room 6"],
+["10:20 AM","11:20 AM","English Language Arts 8","Room 8"],
+["11:20 AM","12:50 PM","Lunch",""],
+["12:50 PM","1:50 PM","Mathematics 8","Room 6"],
+["1:50 PM","2:50 PM","Social Studies 8","Room 8"]
+],
+2:[
+["8:20 AM","9:20 AM","Physical Education 8","Gym"],
+["9:20 AM","10:20 AM","English Language Arts 8","Room 8"],
+["10:20 AM","11:20 AM","Science 8","Room 6"],
+["11:20 AM","12:50 PM","Lunch",""],
+["12:50 PM","1:50 PM","Mathematics 8","Room 6"],
+["1:50 PM","2:50 PM","Band Instruments 8","Library"]
+],
+3:[
+["8:20 AM","9:20 AM","English Language Arts 8","Room 8"],
+["9:20 AM","10:20 AM","Food & Nutrition 8","Room 15B"],
+["10:20 AM","11:20 AM","Core French 8","Room 4"],
+["11:20 AM","12:50 PM","Lunch",""],
+["12:50 PM","1:50 PM","Health Education 8","Room 8"],
+["1:50 PM","2:50 PM","Mathematics 8","Room 6"]
+],
+4:[
+["8:20 AM","9:20 AM","Mathematics 8","Room 6"],
+["9:20 AM","10:20 AM","Core French 8","Room 4"],
+["10:20 AM","11:20 AM","English Language Arts 8","Room 8"],
+["11:20 AM","12:50 PM","Lunch",""],
+["12:50 PM","1:50 PM","Science 8","Room 6"],
+["1:50 PM","2:50 PM","Band Instruments 8","Library"]
+],
+5:[
+["8:20 AM","9:20 AM","Social Studies 8","Room 8"],
+["9:20 AM","10:20 AM","Mathematics 8","Room 6"],
+["10:20 AM","11:20 AM","Physical Education 8","Gym"],
+["11:20 AM","12:50 PM","Lunch",""],
+["12:50 PM","1:50 PM","Science 8","Room 6"],
+["1:50 PM","2:50 PM","English Language Arts 8","Room 8"]
+]
 };
 
+// WEEK 2
 var week2={
-1:[["8:20 AM","9:20 AM","Mathematics 8","Room #6"],["9:20 AM","10:20 AM","Scheduling Need","Room #6"],["10:20 AM","11:20 AM","English Language Arts 8","Room #8"],L,["12:50 PM","1:50 PM","Physical Education 8","Gym"],["1:50 PM","2:50 PM","Band Instruments 8","Library"]],
-2:[["8:20 AM","9:20 AM","Health Education 8","Room #8"],["9:20 AM","10:20 AM","Mathematics 8","Room #6"],["10:20 AM","11:20 AM","English Language Arts 8","Room #8"],L,["12:50 PM","1:50 PM","Science 8","Room #6"],["1:50 PM","2:50 PM","Technology Education 8","Room 15A"]],
-3:[["8:20 AM","9:20 AM","Social Studies 8","Room #8"],["9:20 AM","10:20 AM","Core French 8","Room #4"],["10:20 AM","11:20 AM","Physical Education 8","Gym"],L,["12:50 PM","1:50 PM","Mathematics 8","Room #6"],["1:50 PM","2:50 PM","English Language Arts 8","Room #8"]],
-4:[["8:20 AM","9:20 AM","Science 8","Room #6"],["9:20 AM","10:20 AM","English Language Arts 8","Room #8"],["10:20 AM","11:20 AM","Mathematics 8","Room #6"],L,["12:50 PM","1:50 PM","Core French 8","Room #4"],["1:50 PM","2:50 PM","Social Studies 8","Room #8"]],
-5:[["8:20 AM","9:20 AM","Mathematics 8","Room #6"],["9:20 AM","10:20 AM","Health Education 8","Room #8"],["10:20 AM","11:20 AM","Physical Education 8","Gym"],L,["12:50 PM","1:50 PM","English Language Arts 8","Room #8"],["1:50 PM","2:50 PM","Social Studies 8","Room #8"]]
+1:[
+["8:20 AM","9:20 AM","Mathematics 8","Room 6"],
+["9:20 AM","10:20 AM","Scheduling Need","Room 6"],
+["10:20 AM","11:20 AM","English Language Arts 8","Room 8"],
+["11:20 AM","12:50 PM","Lunch",""],
+["12:50 PM","1:50 PM","Physical Education 8","Gym"],
+["1:50 PM","2:50 PM","Band Instruments 8","Library"]
+],
+2:[
+["8:20 AM","9:20 AM","Health Education 8","Room 8"],
+["9:20 AM","10:20 AM","Mathematics 8","Room 6"],
+["10:20 AM","11:20 AM","English Language Arts 8","Room 8"],
+["11:20 AM","12:50 PM","Lunch",""],
+["12:50 PM","1:50 PM","Science 8","Room 6"],
+["1:50 PM","2:50 PM","Technology Education 8","Room 15A"]
+],
+3:[
+["8:20 AM","9:20 AM","Social Studies 8","Room 8"],
+["9:20 AM","10:20 AM","Core French 8","Room 4"],
+["10:20 AM","11:20 AM","Physical Education 8","Gym"],
+["11:20 AM","12:50 PM","Lunch",""],
+["12:50 PM","1:50 PM","Mathematics 8","Room 6"],
+["1:50 PM","2:50 PM","English Language Arts 8","Room 8"]
+],
+4:[
+["8:20 AM","9:20 AM","Science 8","Room 6"],
+["9:20 AM","10:20 AM","English Language Arts 8","Room 8"],
+["10:20 AM","11:20 AM","Mathematics 8","Room 6"],
+["11:20 AM","12:50 PM","Lunch",""],
+["12:50 PM","1:50 PM","Core French 8","Room 4"],
+["1:50 PM","2:50 PM","Social Studies 8","Room 8"]
+],
+5:[
+["8:20 AM","9:20 AM","Mathematics 8","Room 6"],
+["9:20 AM","10:20 AM","Health Education 8","Room 8"],
+["10:20 AM","11:20 AM","Physical Education 8","Gym"],
+["11:20 AM","12:50 PM","Lunch",""],
+["12:50 PM","1:50 PM","English Language Arts 8","Room 8"],
+["1:50 PM","2:50 PM","Social Studies 8","Room 8"]
+]
 };
 
+// today / weekend handling
 var today=new Date();
 if(today.getDay()==6)today.setDate(today.getDate()+2);
 if(today.getDay()==0)today.setDate(today.getDate()+1);
 
-var diff=Math.floor((today-week1Start)/86400000);
-var weekNum=(Math.floor(diff/7)%2==0)?1:2;
-document.getElementById("week").innerHTML="Week "+weekNum;
-
+// date header
 var days=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 var months=["January","February","March","April","May","June","July","August","September","October","November","December"];
 document.getElementById("date").innerHTML=days[today.getDay()]+", "+months[today.getMonth()]+" "+today.getDate()+", "+today.getFullYear();
 
-var sched=(weekNum==1?week1:week2)[today.getDay()];
+// week number
+var diff=Math.floor((today-week1Start)/86400000);
+var weekNum=Math.floor(diff/7)%2==0?1:2;
+document.getElementById("week").innerHTML="Week "+weekNum;
+
+// render schedule
+var data=(weekNum==1?week1:week2)[today.getDay()];
 var now=new Date();
 var next=false;
 
-for(var i=0;i<sched.length;i++){
- var c=sched[i];
+for(var i=0;i<data.length;i++){
+ var c=data[i];
  var s=new Date(today.toDateString()+" "+c[0]);
  var e=new Date(today.toDateString()+" "+c[1]);
  var cls="class";
  if(now>=s && now<=e)cls+=" current";
  else if(now<s && !next){cls+=" next";next=true;}
+
  document.getElementById("schedule").innerHTML+=
- '<div class="'+cls+'"><div class="time">'+c[0]+' – '+c[1]+'</div><div class="title">'+c[2]+'</div><div class="room">'+c[3]+'</div></div>';
+ "<div class='"+cls+"'>"+
+ "<div class='time'>"+c[0]+" – "+c[1]+"</div>"+
+ "<div class='title'>"+c[2]+"</div>"+
+ (c[3]!=""?"<div class='room'>"+c[3]+"</div>":"")+
+ "</div>";
 }
 </script>
 
